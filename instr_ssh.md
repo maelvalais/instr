@@ -11,6 +11,9 @@
   - [Passwordless connexion to a server](#passwordless-connexion-to-a-server)
   - [Glossary](#glossary)
 
+**WARNING:** many things in this memo are wrong or very wrong. Do not take
+any of it as good information.
+
 ## Ssh authentication themes
 
 ### Case A: unknown host
