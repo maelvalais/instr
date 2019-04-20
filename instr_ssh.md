@@ -1,6 +1,7 @@
 # How client-server ssh authentication works
 
 - [How client-server ssh authentication works](#how-client-server-ssh-authentication-works)
+  - [Difference between CA and cert](#difference-between-ca-and-cert)
   - [Ssh authentication themes](#ssh-authentication-themes)
     - [Case A: unknown host](#case-a-unknown-host)
     - [Case B: host already in known_host but ip changed](#case-b-host-already-in-knownhost-but-ip-changed)
@@ -13,6 +14,24 @@
 
 **WARNING:** many things in this memo are wrong or very wrong. Do not take
 any of it as good information.
+
+## Difference between CA and cert
+
+From
+<https://docs.gitlab.com/runner/configuration/advanced-configuration.html>
+
+- tls-ca-file      certificates to **verify** the peer when using HTTPS
+- tls-cert-file    certificate to **authenticate** with the peer when using HTTPS
+- tls-key-file     private key to authenticate with the peer when using HTTPS
+
+So:
+
+- a **CA** is a certificate of authority. Example: AlphaSSL CA - SHA256 - G2.
+  I will define a certificate of authority as a certificate that is a root
+  CA (i.e., it is installed in browsers and /etc/ssl) or a sub-CA, i.e.,
+  any certificate signed by a root CA.
+- a **cert** is a certificate
+
 
 ## Ssh authentication themes
 
