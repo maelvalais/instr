@@ -4,6 +4,8 @@
   - [General information](#general-information)
   - [Sed](#sed)
   - [Shell, terminal, console, command line](#shell-terminal-console-command-line)
+  - [`.bash_profile` vs `.bashrc`](#bashprofile-vs-bashrc)
+  - [Tty, pty, interactive vs non-interactive](#tty-pty-interactive-vs-non-interactive)
   - [Login vs. non-login shells](#login-vs-non-login-shells)
   - [Use `bashrc` also on login shell](#use-bashrc-also-on-login-shell)
   - [Parallelize xargs](#parallelize-xargs)
@@ -57,6 +59,11 @@ Substitute dots to `_` in filenames:
   A shell specialized for interpreting commands
 - Bash
   one of the many command-line shells
+- `tty`: Teletype, meaning interactive terminal, as opposed to
+  tty-less/headless terminal.
+- `pty`: pseudo-teletype is a tty that does not directly talk to a end-user
+  terminal but instead talks to another terminal. Most terminal emulators
+  such as iTerm2, xterm... use a pty instead of a tty.
 
 What happens when I want to launch some bourne-shell commands:
 
@@ -65,18 +72,35 @@ What happens when I want to launch some bourne-shell commands:
 3. The terminal emulator will then execute a command-line shell (/bin/sh)
 4. then I can type my commands
 
+## `.bash_profile` vs `.bashrc`
+
+- `.bash_profile` (and `.profile`) when login shell
+- `.bashrc` when interactive shell (tty/pty)
+
+A login shell is a shell where $0 == "-"
+
+## Tty, pty, interactive vs non-interactive
+
+    node -p -e "Boolean(process.stdout.isTTY)"
+    [ -t 1 ]
+
 ## Login vs. non-login shells
 
-An interactive login shell is the shell launched when using ssh, or when you
-start linux in command-line mode. Usually, this login-shell will not be used
-because you would have window or desktop manager.
+An interactive login shell is the shell launched when using ssh, iTerm2 or
+xterm. In interactive login shell, `.profile` and `.bash_profile` are used.
+To know if you are in a login shell:
 
-In interactive login shell, `.profile` and `.bash_profile` are used. To
-know if you are in a login shell >> echo \$0
+```sh
+$ echo $0
 -bash
+```
 
-Interactive non-login shell: `.bashrc` is used >> echo \$0
+Interactive non-login shell: `.bashrc` is used
+
+```sh
+$ echo $0
 bash
+```
 
 ## Use `bashrc` also on login shell
 

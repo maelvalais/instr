@@ -1,5 +1,13 @@
 # How is a TCP connection uniquely identified
 
+Kill a process that is using a TCP port you need:
+
+```sh
+lsof -n -i :8001
+# copy PID
+kill 43903
+```
+
 A TCP connection is identified by four things:
 
 - source port
@@ -65,15 +73,15 @@ TCP socket = internal representation of the 'from' (ip:port)
 
 ## The stack
 
-|   OSI   | Lv | TCP/IP |   Keywords   |          |
-|---------|----|--------|--------------|----------|
-| Applica | L7 | HTTPS  | LB           | Data     |
-| Present |    | HTTPS  |              |          |
-| Session |    | HTTPS  |              |          |
-| Transpo | L4 | TCP    | Firewall     | Segments |
-| Network | L3 | IP     | Router       | Packets  |
-| Link    | L2 | MAC    | VLAN, Switch | Frames   |
-| Physic  | L1 |        |              | Bits     |
+|   OSI   | Lv |  TCP/IP  |   Keywords   |          |
+|---------|----|----------|--------------|----------|
+| Applica | L7 | HTTPS    | LB           | Data     |
+| Present |    | HTTPS    |              |          |
+| Session |    | HTTPS    |              |          |
+| Transpo | L4 | TCP,ICMP | Firewall     | Segments |
+| Network | L3 | IP       | Router       | Packets  |
+| Link    | L2 | MAC      | VLAN, Switch | Frames   |
+| Physic  | L1 |          |              | Bits     |
 
 **VLAN** = just like the good'old ethernet between multiple equipments.
 Switches aliviates some of the issues with the one-cable-for-multiple-pc
@@ -84,3 +92,53 @@ link with less noise on each link overall.
 SYN = please open a connection. ACK = acknowledge.
 
 Segments vs packets??
+
+## CIDR, network masks, subnets
+
+
+
+10.0.2.3/16 = 16 first bits (10.0) for subnet.
+
+The idea of subnets: inside of a subnet, we pretty much share the same
+VLAN. For example, let's say that we have two subnets A and B.
+
+|       |  Subnet A   |  Subnet B   |
+|-------|-------------|-------------|
+| CIDR  | 10.0.1.0/24 | 10.0.2.0/24 |
+| Count | 254         | 254         |
+| VLAN  | VLAN1       | VLAN2       |
+
+### Link between Subnet (L3) and VLAN (L2)
+
+First, let us remember that every machine in a VLAN can communicate with
+each other at any time. Now, we want to control what goes from/to A and B.
+
+In a VLAN, everything sees everything but it's now really helpful unless we
+can use protocols like TCP. But TCP needs IPs. And IPs
+
+A1 (10.0.1.7) ----> A2 (10.0.1.13)
+  Same subnet, ARP table says I know the MAC address so no need to route.
+
+The subnet allows a machine to know what is 'internal' traffic and what is
+routed traffic.
+
+- A1 -----> IP inside subnet = A1 asks which MAC has this IP using ARP.
+- A1 -----> IP outside subnet = NAT to the gateway (= a router). See 'Routing'.
+
+## Routing
+
+The gateway has routing tables such as
+
+
+
+## AWS terms
+
+IGW = internet gateway
+VPC = virtual private cloud. ne VPC is equivalent to a VLAN: everyone can
+talk to everyone on L2 (MAC level).
+
+
+The routing in a VPC:
+
+- each subnet has an ACL (network access control list)
+- each EC2 has security groups (L4 stateful firewall)

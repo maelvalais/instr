@@ -11,3 +11,8 @@ eval $(docker-machine env polatouche-docker-host)
 ## Tunneling
 
     docker-machine ssh default -L 0.0.0.0:8000:localhost:8000
+
+## Namespaces, cgroups
+
+1. namespaces
+2. cgroup (systemd-cgls)
